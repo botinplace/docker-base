@@ -1,10 +1,10 @@
+git clone ... testsite1
+
 docker-compose exec php bash
 
 cd /var/www/html/testsite1
 
 composer install / git clone https://github.com/репозиторий.git 
-
-
 
 
 rm -rf .git

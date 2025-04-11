@@ -1,3 +1,6 @@
+Проверка доступных расширений php:
+docker-compose exec php php -m
+
 git clone ... testsite1
 
 docker-compose exec php bash

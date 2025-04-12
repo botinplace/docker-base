@@ -1,0 +1,26 @@
+Проверка доступных расширений php:
+docker-compose exec php php -m
+
+git clone ... testsite1
+
+docker-compose exec php bash
+
+cd /var/www/html/testsite1
+
+composer install / git clone https://github.com/репозиторий.git 
+
+
+rm -rf .git
+rm -rf dirname
+
+git config --global --add safe.directory /var/www/html/testsite
+git pull
+
+git checkout -- src/Logs/log
+
+
+chown -R www-data:www-data /var/www/html/testsite/src/Logs
+chown -R www-data:www-data /var/www/html/testsite/src/cache
+
+
+ sudo chmod -R 775 ./www

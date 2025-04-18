@@ -2,12 +2,13 @@ FROM php:8.4-fpm
 
 COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf 
 
-# Установка зависимости, Git и unzip (для Composer), библиотека для LDAP
+# Установка зависимости, Git и unzip (для Composer), библиотека для LDAP, PostgreSQL
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libldap2-dev \
     libsasl2-dev \
+	libpq-dev \ 
     && rm -rf /var/lib/apt/lists/*
 
 # Установка Composer
@@ -22,6 +23,9 @@ RUN pecl install redis && docker-php-ext-enable redis
 
 # Установка расширения LDAP
 RUN docker-php-ext-install ldap
+
+# Установка расширений для PostgreSQL
+RUN docker-php-ext-install pdo pdo_pgsql pgsql
 
 # Создание директории для сокета
 RUN mkdir -p /var/run/php

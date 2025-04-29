@@ -17,15 +17,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Установка расширения Redis
 RUN pecl install redis && docker-php-ext-enable redis
 
-# Установка расширения LDAP
-#RUN docker-php-ext-configure ldap --with-ldap=/usr/include/ && \
-#    docker-php-ext-install ldap
-
-# Установка расширения LDAP
-RUN docker-php-ext-install ldap
-
-# Установка расширений для PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql pgsql
+# Установка PHP-расширений LDAP PostgreSQL ZIP
+RUN docker-php-ext-install \
+    pdo pdo_pgsql pgsql \
+    ldap \
+    zip  
 
 # Создание директории для сокета
 RUN mkdir -p /var/run/php

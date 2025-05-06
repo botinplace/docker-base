@@ -3,12 +3,18 @@ FROM php:8.4-fpm
 COPY ./config/www.conf /usr/local/etc/php-fpm.d/www.conf 
 
 # Установка зависимости, Git и unzip (для Composer), библиотека для LDAP, PostgreSQL
-RUN apt-get update && apt-get install -y \
+RUN apt-get -o Acquire::http::Timeout=60 update && \
+    apt-get -o Acquire::http::Timeout=60 install -y --fix-missing \
     git \
     unzip \
     libldap2-dev \
     libsasl2-dev \
-	libpq-dev \ 
+    libpq-dev \
+    libzip-dev \
+    libreoffice \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Установка Composer
@@ -16,6 +22,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Установка расширения Redis
 RUN pecl install redis && docker-php-ext-enable redis
+
+# Настройка и установка GD
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install -j$(nproc) gd
 
 # Установка PHP-расширений LDAP PostgreSQL ZIP
 RUN docker-php-ext-install \

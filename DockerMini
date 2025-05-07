@@ -1,0 +1,42 @@
+# Базовый образ (используйте alpine для уменьшения размера)
+FROM php:8.4-fpm-alpine
+
+# Копируем все конфиги за один раз
+COPY ./config/ /tmp/config/
+
+# Устанавливаем зависимости
+RUN apk update && apk add --no-cache \
+    git \
+    unzip \
+    postgresql-dev \
+    libzip-dev \
+    libldap \
+    openldap-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    # Опционально: только если действительно нужно
+    # libreoffice 
+
+# Устанавливаем PHP-расширения
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install -j$(nproc) \
+    pdo \
+    pdo_pgsql \
+    ldap \
+    zip \
+    gd && \
+    pecl install redis && \
+    docker-php-ext-enable redis
+
+# Копируем конфиг PHP-FPM
+RUN mv /tmp/config/www.conf /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's|^listen =.*|listen = /var/run/php/php-fpm.sock|g' /usr/local/etc/php-fpm.d/zz-docker.conf
+
+# Устанавливаем Composer (кэшируемая версия)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Создаем директории
+RUN mkdir -p /var/run/php
+
+CMD ["php-fpm"]
